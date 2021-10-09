@@ -1,28 +1,46 @@
-package jetBrains;
 import java.util.*;
 
 public class bullsCows {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Please, enter the secret code's length: ");
-        int length = sc.nextInt();
+        System.out.print("Input the length of the secret code: ");
+        int volume = sc.nextInt();
 //        while (length >= 10 || length < 4) {
 //            System.out.println("Error! Pick a number again: ");
 //            length = sc.nextInt();
 //        }
         // sc.close();
-        sc.nextLine();
+        System.out.print("Input the number of possible symbols in the code: ");
+        int inputLength = sc.nextInt();
+
+        String star = "";
+        for (int i = 0; i < volume; i++) {
+            star += "*"; 
+        }
+        int numRange = 0;
+        String charRange = ""; 
+        if (inputLength < 10) {
+            numRange = inputLength;
+        } else {
+            numRange = 9;
+            charRange = Character.toString(inputLength - 10 + 96);
+
+        }
+        System.out.println("The secret is prepared: " + star + " (0-" + numRange + ", a-" +  charRange + ").");
         System.out.println("Okay, let's start a game!");
-        String secret = generateNum(length);
+        
+
+        String secret = generateNum(volume, inputLength);
         String input = "0000";
 
-         while (!secret.equals(input)) {
-             int i = 1;
-             System.out.println("Turn " + i + ":");
-             input = sc.next();
-             grader(secret, input);
-             i++;
+        int i = 0;
+        while (!secret.equals(input)) {
+            i++;
+            System.out.println("Turn " + i + ":");
+            input = sc.next();
+            grader(secret, input);
+             
          }
         sc.close();
         
@@ -30,21 +48,30 @@ public class bullsCows {
 
     }
 
-    public static String generateNum(int volume) {
+    public static String generateNum(int volume, int inputLength) {
 
         StringBuilder sb = new StringBuilder();
 
         if (volume >= 10) {
             System.out.println("Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.");
         } else {
-            List<Integer> randomList = new ArrayList<>(List.of(0, 2, 3, 4, 5, 6, 7, 8, 9));
+            List<Integer> randomList = new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+            
+            int addChar = inputLength - 10;
+            for (int i = 0; i < addChar; i++) {
+                randomList.add(i + 97);
+            }
             Collections.shuffle(randomList);
 
             while (randomList.get(0) == 0) {
                 Collections.shuffle(randomList);
             }
             for (int i = 0; i < volume; i++) {
-                sb.append(randomList.get(i));
+                if (randomList.get(i) > 96) {
+                    sb.append(Character.toString(randomList.get(i)));
+                } else {
+                    sb.append(randomList.get(i));
+                }
             }
         }
         return sb.toString();
@@ -82,13 +109,13 @@ public class bullsCows {
 //        }
 
         if (cow > 0 && bull > 0) {
-            System.out.println("Grade: " + bull + " bull(s) and " + cow + " cow(s).");
+            System.out.println("Grade: " + bull + " bull(s) and " + cow + " cow(s)." + secret);
         } else if (bull == 0 && cow == 0) {
-            System.out.println("Grade: None.");
+            System.out.println("Grade: None." + secret);
         } else if (cow == 0) {
-            System.out.println("Grade: " + bull + " bull(s).");
+            System.out.println("Grade: " + bull + " bull(s)." + secret);
         } else if (bull == 0) {
-            System.out.println("Grade: " + cow + " cow(s).");
+            System.out.println("Grade: " + cow + " cow(s)." + secret);
         }
     }
 
